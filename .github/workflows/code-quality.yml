@@ -31,23 +31,14 @@ jobs:
           sf code-analyzer run \
             --target force-app/main/default/classes \
             --rule-selector pmd \
-            --config-file code-analyzer.yml \
-            --view detail
+            --view detail > pmd-results.txt
         continue-on-error: false  # Fails on violations
 
-      - name: Convert to SARIF for GitHub Code Scanning
-        run: |
-          # Simple conversion for SARIF (v5 outputs detail; use jq or script to format)
-          sf code-analyzer run \
-            --target force-app/main/default/classes \
-            --rule-selector pmd \
-            --config-file code-analyzer.yml \
-            --view detail > pmd-detail.txt
-          # Basic SARIF stub (expand with jq if needed)
-          echo '{"tool": {"driver": {"name": "PMD"}}, "runs": [{"results": []}]}' > pmd-results.sarif
-        continue-on-error: false
+      - name: Display PMD Results (for logs)
+        run: cat pmd-results.txt
 
-      - name: Upload SARIF for GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v3
+      - name: Upload PMD Results as Artifact
+        uses: actions/upload-artifact@v4
         with:
-          sarif_file: pmd-results.sarif
+          name: pmd-results
+          path: pmd-results.txt
