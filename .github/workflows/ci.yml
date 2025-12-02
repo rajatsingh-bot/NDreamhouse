@@ -1,0 +1,37 @@
+name: Dreamhouse CI – Always Green Forever
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+concurrency:
+  group: dreamhouse-ci
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Salesforce CLI
+        run: npm install @salesforce/cli --global
+
+      - name: Authenticate Dev Hub (100% working method)
+        run: |
+          echo "${{ secrets.SFDX_DEVHUB_URL }}" > auth.txt
+          sf org login sfdx-url -f auth.txt -d -a DevHub
+
+      - name: Create Scratch Org
+        run: sf org create scratch -f config/project-scratch-def.json -a ci-org -y 7 -w 30
+
+      - name: Deploy Dreamhouse
+        run: sf project deploy start -o ci-org
+
+      - name: Run Apex Tests
+        run: sf apex test run -o ci-org -c -r human -w 30
+
+      - name: Cleanup
+        if: always()
+        run: sf org delete scratch -o ci-org -p || true
