@@ -32,7 +32,7 @@ jobs:
             --target force-app/main/default/classes \
             --rule-selector pmd \
             --pmdconfig pmd-ruleset.xml \
-            --view sarif \
+            --format sarif \
             --outfile pmd-results.sarif
         continue-on-error: false  # Fails on violations
 
