@@ -18,23 +18,24 @@ jobs:
       - name: Install Code Analyzer Plugin (v5)
         run: sf plugins install code-analyzer
 
-      - name: Run Salesforce Code Analyzer (PMD + ESLint)
+      - name: Run Salesforce Code Analyzer (PMD + ESLint-LWC)
         run: |
           sf code-analyzer run \
             --target force-app \
-            --engine pmd,eslint-lwc \
-            --format table \
-            --fail-on any
+            --rule-selector pmd,eslint-lwc \
+            --view table \
+            --exit-on-violation
         continue-on-error: false  # Fails pipeline on any violation
 
       - name: Run Apex PMD Only (Extra Strict)
         run: |
           sf code-analyzer run \
             --target force-app/main/default/classes \
-            --engine pmd \
+            --rule-selector pmd \
             --pmdconfig pmd-ruleset.xml \
-            --format sarif \
-            --output pmd-results.sarif
+            --view sarif \
+            --outfile pmd-results.sarif \
+            --exit-on-violation
         continue-on-error: false
 
       - name: Upload SARIF for GitHub Code Scanning
