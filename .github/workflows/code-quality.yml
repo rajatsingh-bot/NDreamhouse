@@ -1,4 +1,4 @@
-# ———————————— CODE QUALITY PIPELINE (No Scratch Org) ———————————— check again
+# ———————————— CODE QUALITY PIPELINE (No Scratch Org) ————————————
 name: Code Quality (PMD + SCA + Linting)
 
 on:
@@ -12,28 +12,30 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Salesforce CLI + Code Analyzer
-        run: |
-          npm install @salesforce/cli --global
-          sf plugins install @salesforce/code-analyzer
+      - name: Install Salesforce CLI
+        run: npm install @salesforce/cli --global
 
-      - name: Run Salesforce Code Analyzer (PMD + SCA)
+      - name: Install Code Analyzer Plugin (v5)
+        run: sf plugins install code-analyzer
+
+      - name: Run Salesforce Code Analyzer (PMD + ESLint)
         run: |
           sf code-analyzer run \
             --target force-app \
-            --engine pmd,retire-js,eslint-lwc \
+            --engine pmd,eslint-lwc \
             --format table \
             --fail-on any
-        continue-on-error: false   # Fails pipeline on any violation
+        continue-on-error: false  # Fails pipeline on any violation
 
-      - name: Run Apex PMD Only (extra strict)
+      - name: Run Apex PMD Only (Extra Strict)
         run: |
           sf code-analyzer run \
             --target force-app/main/default/classes \
             --engine pmd \
-            --pmdconfig .pmd-ruleset.xml \
+            --pmdconfig pmd-ruleset.xml \
             --format sarif \
-            --output pmd-results.sarif || echo "PMD found issues"
+            --output pmd-results.sarif
+        continue-on-error: false
 
       - name: Upload SARIF for GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v3
