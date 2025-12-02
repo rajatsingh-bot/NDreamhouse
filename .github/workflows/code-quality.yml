@@ -16,13 +16,13 @@ jobs:
         run: npm install @salesforce/cli --global
 
       - name: Install Code Analyzer Plugin (v5)
-        run: sf plugins install code-analyzer
+        run: sf plugins install code-analyzer@latest
 
       - name: Run Salesforce Code Analyzer (PMD + ESLint-LWC)
         run: |
           sf code-analyzer run \
             --target force-app \
-            --rule-selector pmd,eslint-lwc \
+            --rule-selector pmd eslint-lwc \
             --view table \
             --exit-on-violation
         continue-on-error: false  # Fails pipeline on any violation
