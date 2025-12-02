@@ -31,20 +31,20 @@ jobs:
           sf code-analyzer run \
             --target force-app/main/default/classes \
             --rule-selector pmd \
-            --pmdconfig pmd-ruleset.xml \
+            --config-file code-analyzer.yml \
             --view detail
         continue-on-error: false  # Fails on violations
 
-      - name: Upload PMD Results for GitHub Code Scanning (Convert to SARIF)
+      - name: Convert to SARIF for GitHub Code Scanning
         run: |
-          # Convert detail output to SARIF for GitHub (simple script)
+          # Simple conversion for SARIF (v5 outputs detail; use jq or script to format)
           sf code-analyzer run \
             --target force-app/main/default/classes \
             --rule-selector pmd \
-            --pmdconfig pmd-ruleset.xml \
+            --config-file code-analyzer.yml \
             --view detail > pmd-detail.txt
-          # Use a simple converter (npm tool or script – for demo)
-          echo '[{"tool": "PMD", "results": []}]' > pmd-results.sarif
+          # Basic SARIF stub (expand with jq if needed)
+          echo '{"tool": {"driver": {"name": "PMD"}}, "runs": [{"results": []}]}' > pmd-results.sarif
         continue-on-error: false
 
       - name: Upload SARIF for GitHub Code Scanning
