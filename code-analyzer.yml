@@ -1,0 +1,10 @@
+# code-analyzer.yml – Custom PMD Rules for v5
+engines:
+  pmd:
+    rules:
+      - name: AvoidSoqlInLoops
+        severity: error
+      - name: AvoidDmlStatementsInLoops
+        severity: error
+      - category: security
+        severity: warning
