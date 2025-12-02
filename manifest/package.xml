@@ -1,36 +1,73 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <!-- Apex Classes -->
     <types>
-        <members>*</members>
+        <members>PropertyController</members>
+        <members>PropertyControllerTest</members>
         <name>ApexClass</name>
     </types>
+
+    <!-- Lightning Web Components -->
     <types>
-        <members>*</members>
-        <name>ApexComponent</name>
+        <members>propertyCard</members>
+        <members>propertyFilter</members>
+        <members>propertyList</members>
+        <members>propertyMap</members>
+        <members>propertyTile</members>
+        <members>propertyDetail</members>
+        <name>LightningComponentBundle</name>
     </types>
+
+    <!-- Custom Objects -->
+    <types>
+        <members>Property__c</members>
+        <members>Broker__c</members>
+        <members>Favorite__c</members>
+        <name>CustomObject</name>
+    </types>
+
+    <!-- Custom Tabs -->
+    <types>
+        <members>Property__c</members>
+        <members>Broker__c</members>
+        <members>Favorite__c</members>
+        <name>CustomTab</name>
+    </types>
+
+    <!-- FlexiPages (Lightning App Builder pages) -->
+    <types>
+        <members>Property_Record_Page</members>
+        <members>Broker_Record_Page</members>
+        <members>Dreamhouse_App</members>
+        <name>FlexiPage</name>
+    </types>
+
+    <!-- Custom Application -->
+    <types>
+        <members>Dreamhouse</members>
+        <name>CustomApplication</name>
+    </types>
+
+    <!-- Static Resources (images, CSS, etc.) -->
+    <types>
+        <members>dreamhouse_logos</members>
+        <members>dreamhouse_css</members>
+        <members>dreamhouse_js</members>
+        <name>StaticResource</name>
+    </types>
+
+    <!-- Apex Pages (if you still have any Visualforce) -->
     <types>
         <members>*</members>
         <name>ApexPage</name>
     </types>
+
     <types>
-        <members>*</members>
-        <name>ApexTestSuite</name>
+        <members>Property__c</members>
+        <members>Broker__c</members>
+        <members>Favorite__c</members>
+        <name>CustomObject</name>
     </types>
-    <types>
-        <members>*</members>
-        <name>ApexTrigger</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>AuraDefinitionBundle</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>LightningComponentBundle</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>StaticResource</name>
-    </types>
+    
     <version>65.0</version>
 </Package>
