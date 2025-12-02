@@ -1,4 +1,4 @@
-# ———————————— CODE QUALITY PIPELINE (No Scratch Org) ————————————
+# ———————————— CODE QUALITY PIPELINE (No Scratch Org) ———————————— check again
 name: Code Quality (PMD + SCA + Linting)
 
 on:
