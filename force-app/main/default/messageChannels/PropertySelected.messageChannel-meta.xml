@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LightningMessageChannel xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>PropertySelected</fullName>
     <masterLabel>Property Selected</masterLabel>
     <isExposed>true</isExposed>
-    <description>Message channel used for property selection</description>
+    <description>Communicates property selection in Dreamhouse</description>
+    <lightningMessageFields>
+        <fieldName>propertyId</fieldName>
+        <description>Selected property record ID</description>
+    </lightningMessageFields>
 </LightningMessageChannel>
