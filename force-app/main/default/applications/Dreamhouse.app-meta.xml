@@ -38,7 +38,6 @@
     </actionOverrides>
     <brand>
         <headerColor>#86BD4A</headerColor>
-        <logo>dreamhouselogosquare</logo>
         <shouldOverrideOrgTheme>false</shouldOverrideOrgTheme>
     </brand>
     <formFactors>Small</formFactors>
@@ -52,11 +51,9 @@
     <setupExperience>all</setupExperience>
     <tabs>standard-home</tabs>
     <tabs>Property_Explorer</tabs>
-    <tabs>Property_Finder</tabs>
     <tabs>standard-Contact</tabs>
     <tabs>Property__c</tabs>
     <tabs>Broker__c</tabs>
     <tabs>standard-File</tabs>
-    <tabs>Settings</tabs>
     <uiType>Lightning</uiType>
 </CustomApplication>
