@@ -1,7 +1,9 @@
 @isTest
 private class TestPropertyController {
+
     private final static String MOCK_PICTURE_NAME = 'MockPictureName';
 
+    // Utility method to create property records
     public static void createProperties(Integer amount) {
         List<Property__c> properties = new List<Property__c>();
         for (Integer i = 0; i < amount; i++) {
@@ -10,52 +12,42 @@ private class TestPropertyController {
                     Name = 'Name ' + i,
                     Price__c = 20000,
                     Beds__c = 3,
-                    Baths__c = 3
+                    Baths__c = 3,
+                    City__c = 'Delhi',
+                    Tags__c = 'Test'
                 )
             );
         }
         insert properties;
     }
 
+    /*************************************************************
+     * Test: getPagedPropertyList
+     *************************************************************/
     @isTest
     static void testGetPagedPropertyList() {
-        Profile standardUserProfile = [
-            SELECT Name, Id
-            FROM Profile
-            WHERE
-                UserType = 'Standard'
-                AND PermissionsPrivacyDataAccess = FALSE
-                AND PermissionsSubmitMacrosAllowed = TRUE
-                AND PermissionsMassInlineEdit = TRUE
-            LIMIT 1
-        ];
+
+        // Create a simple test user
+        Profile p = [SELECT Id FROM Profile WHERE Name = 'Standard User' LIMIT 1];
         User testUser = new User(
-            Alias = 'standt',
-            Email = 'standarduser@testorg.com',
+            Alias = 'tuser',
+            Email = 'testuser@test.com',
             EmailEncodingKey = 'UTF-8',
-            LastName = 'Testing',
+            LastName = 'User',
             LanguageLocaleKey = 'en_US',
             LocaleSidKey = 'en_US',
-            ProfileId = standardUserProfile.Id,
+            ProfileId = p.Id,
             TimeZoneSidKey = 'America/Los_Angeles',
-            UserName = 'standarduser@dreamhouse-testorg.com'
+            UserName = 'testuser.dreamhouse@example.com'
         );
         insert testUser;
-        PermissionSet ps = [
-            SELECT Id
-            FROM PermissionSet
-            WHERE Name = 'dreamhouse'
-        ];
-        insert new PermissionSetAssignment(
-            AssigneeId = testUser.Id,
-            PermissionSetId = ps.Id
-        );
 
-        // Insert test properties as admin
+        // Insert test properties (run as admin)
         System.runAs(new User(Id = UserInfo.getUserId())) {
             TestPropertyController.createProperties(5);
         }
-        // Read properties as test user
+
+        // Run as test user
         System.runAs(testUser) {
             Test.startTest();
             PagedResult result = PropertyController.getPagedPropertyList(
@@ -67,55 +59,70 @@ private class TestPropertyController {
                 1
             );
             Test.stopTest();
-            Assert.areEqual(5, result.records.size());
+
+            System.assertEquals(5, result.records.size(), 'Should return 5 properties');
         }
     }
 
+    /*************************************************************
+     * Test: getPictures - No Results
+     *************************************************************/
     @isTest
     static void testGetPicturesNoResults() {
-        Property__c property = new Property__c(Name = 'Name');
+        Property__c property = new Property__c(
+            Name = 'Test Property',
+            City__c = 'Delhi',
+            Tags__c = 'Tag'
+        );
         insert property;
 
         Test.startTest();
-        List<ContentVersion> items = PropertyController.getPictures(
-            property.Id
-        );
+        List<ContentVersion> items = PropertyController.getPictures(property.Id);
         Test.stopTest();
 
-        Assert.isNull(items);
+        System.assertEquals(null, items, 'No pictures should return null');
     }
 
+    /*************************************************************
+     * Test: getPictures - With Results
+     *************************************************************/
     @isTest
     static void testGetPicturesWithResults() {
-        Property__c property = new Property__c(Name = 'Name');
+        Property__c property = new Property__c(
+            Name = 'Test Property',
+            City__c = 'Delhi',
+            Tags__c = 'Tag'
+        );
         insert property;
 
-        // Insert mock picture
-        ContentVersion picture = new Contentversion();
+        // Insert mock ContentVersion
+        ContentVersion picture = new ContentVersion();
         picture.Title = MOCK_PICTURE_NAME;
         picture.PathOnClient = 'picture.png';
-        picture.Versiondata = EncodingUtil.base64Decode('MockValue');
+        picture.VersionData = EncodingUtil.base64Decode('MockValue');
         insert picture;
 
-        // Link picture to property record
-        List<ContentDocument> documents = [
-            SELECT Id, Title, LatestPublishedVersionId
+        // Fetch actual ContentDocument
+        ContentDocument doc = [
+            SELECT Id, LatestPublishedVersionId
             FROM ContentDocument
+            WHERE LatestPublishedVersionId = :picture.Id
             LIMIT 1
         ];
+
+        // Create link
         ContentDocumentLink link = new ContentDocumentLink();
         link.LinkedEntityId = property.Id;
-        link.ContentDocumentId = documents[0].Id;
-        link.shareType = 'V';
+        link.ContentDocumentId = doc.Id;
+        link.ShareType = 'V';
+        link.Visibility = 'AllUsers';
         insert link;
 
         Test.startTest();
-        List<ContentVersion> items = PropertyController.getPictures(
-            property.Id
-        );
+        List<ContentVersion> items = PropertyController.getPictures(property.Id);
         Test.stopTest();
 
-        Assert.areEqual(1, items.size());
-        Assert.areEqual(MOCK_PICTURE_NAME, items[0].Title);
+        System.assertEquals(1, items.size(), 'Should return 1 picture');
+        System.assertEquals(MOCK_PICTURE_NAME, items[0].Title, 'Picture name should match');
     }
 }
